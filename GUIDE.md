@@ -97,3 +97,37 @@ npm run dev
 Buka browser Anda ke alamat:
 * **Halaman Publik**: `http://localhost:3000`
 * **Dasbor Admin**: `http://localhost:3000/admin/login` *(Login menggunakan kredensial `ADMIN_USERNAME` dan `ADMIN_PASSWORD` pada `.env.local`)*
+
+---
+
+## 4. Migrasi Data dari Lokal (MariaDB/MySQL) ke Production (Supabase)
+
+Jika Anda telah memasukkan data kategori atau produk di komputer lokal selama masa pengembangan, Anda bisa langsung menyinkronkan data tersebut ke Supabase produksi tanpa perlu input manual ulang.
+
+### Langkah 4.1: Lengkapi Kredensial di `.env.local`
+Pastikan variabel lingkungan lokal (MariaDB) dan produksi (Supabase) terisi dengan benar di file `.env.local` Anda:
+```env
+# MariaDB Lokal
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=ayp_user
+DB_PASSWORD=your_dev_db_password
+DB_NAME=ayp_affiliate
+
+# Supabase Produksi
+NEXT_PUBLIC_SUPABASE_URL=https://xxxx.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key_secret
+```
+*PENTING: Pastikan Anda menggunakan `SUPABASE_SERVICE_ROLE_KEY` (Service Role Key) agar script migrasi memiliki wewenang penuh untuk bypass kebijakan RLS (Row Level Security) saat menyisipkan data secara langsung.*
+
+### Langkah 4.2: Jalankan Script Migrasi
+Di terminal root proyek Anda, jalankan perintah Node.js berikut:
+```bash
+node scripts/migrate.js
+```
+
+Script akan otomatis:
+1. Membaca data kategori lokal dan melakukan `upsert` ke Supabase.
+2. Membaca data produk lokal, melakukan penyesuaian tipe data boolean, dan melakukan `upsert` ke Supabase.
+3. Menjaga kecocokan ID UUID antara kategori dan produk lokal agar relasi antar-tabel tidak terputus.
+
