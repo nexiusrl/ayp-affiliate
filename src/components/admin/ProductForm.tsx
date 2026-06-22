@@ -2,11 +2,10 @@
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { Wand2, PenLine } from "lucide-react";
+import { PenLine } from "lucide-react";
 import { type Category, type Product, type Platform } from "@/types";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import { ScrapeInput } from "./ScrapeInput";
 import { useToast } from "@/components/ui/Toast";
 
 interface ProductFormProps {
@@ -14,14 +13,11 @@ interface ProductFormProps {
   product?: Product;
 }
 
-type InputMode = "scrape" | "manual";
-
 export function ProductForm({ categories, product }: ProductFormProps) {
   const router = useRouter();
   const { success, error: toastError } = useToast();
   const isEdit = !!product;
 
-  const [mode, setMode] = useState<InputMode>(isEdit ? "manual" : "scrape");
   const [loading, setLoading] = useState(false);
 
   const [form, setForm] = useState({
@@ -35,21 +31,7 @@ export function ProductForm({ categories, product }: ProductFormProps) {
     is_active: product?.is_active ?? true,
   });
 
-  const handleScrapeSuccess = (data: {
-    name: string;
-    price: number;
-    image_url: string;
-    affiliate_url: string;
-  }) => {
-    setForm((prev) => ({
-      ...prev,
-      name: data.name || prev.name,
-      price: data.price ? data.price.toString() : prev.price,
-      image_url: data.image_url || prev.image_url,
-      affiliate_url: data.affiliate_url || prev.affiliate_url,
-    }));
-    setMode("manual");
-  };
+
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -91,57 +73,13 @@ export function ProductForm({ categories, product }: ProductFormProps) {
 
   return (
     <div className="max-w-2xl">
-      {/* Mode toggle (only for new product) */}
-      {!isEdit && (
-        <div className="flex gap-2 mb-6 p-1 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl w-fit">
-          <button
-            type="button"
-            onClick={() => setMode("scrape")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-              mode === "scrape"
-                ? "bg-white text-[#0F172A] shadow-sm border border-[#E2E8F0]"
-                : "text-[#64748B] hover:text-[#0F172A]"
-            }`}
-          >
-            <Wand2 size={15} />
-            Scrape Otomatis
-          </button>
-          <button
-            type="button"
-            onClick={() => setMode("manual")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-              mode === "manual"
-                ? "bg-white text-[#0F172A] shadow-sm border border-[#E2E8F0]"
-                : "text-[#64748B] hover:text-[#0F172A]"
-            }`}
-          >
-            <PenLine size={15} />
-            Manual
-          </button>
-        </div>
-      )}
-
-      {/* Scrape mode */}
-      {mode === "scrape" && !isEdit && (
-        <div className="bg-white rounded-xl border border-[#E2E8F0] p-5 mb-5">
-          <h2 className="text-sm font-semibold text-[#0F172A] mb-1">
-            Scrape dari Link Produk
-          </h2>
-          <p className="text-xs text-[#64748B] mb-4">
-            Paste link produk Shopee/Tokopedia. Nama, harga, dan gambar akan
-            terisi otomatis (bisa diedit setelahnya).
-          </p>
-          <ScrapeInput onSuccess={handleScrapeSuccess} />
-        </div>
-      )}
-
       {/* Manual form */}
       <form
         onSubmit={handleSubmit}
         className="bg-white rounded-xl border border-[#E2E8F0] p-5 flex flex-col gap-4"
       >
         <h2 className="text-sm font-semibold text-[#0F172A]">
-          {mode === "scrape" ? "Edit Data (Opsional)" : "Data Produk"}
+          Data Produk
         </h2>
 
         <Input
