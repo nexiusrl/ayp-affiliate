@@ -2,7 +2,7 @@
 
 AYP Affiliate adalah platform showcase produk afiliasi yang dibangun menggunakan **Next.js** (App Router). Aplikasi ini dirancang untuk menampilkan produk-produk terbaik dari marketplace seperti Shopee dan Tokopedia dengan dukungan filter kategori dan pencarian cepat.
 
-Aplikasi dilengkapi dengan **Dashboard Admin** yang aman untuk mengelola kategori dan produk, serta fitur **Auto-Scraping** untuk mengekstrak informasi produk (nama, harga, gambar) secara otomatis hanya menggunakan tautan produk.
+Aplikasi dilengkapi dengan **Dashboard Admin** yang aman untuk mengelola kategori dan produk secara manual.
 
 ---
 
@@ -10,12 +10,11 @@ Aplikasi dilengkapi dengan **Dashboard Admin** yang aman untuk mengelola kategor
 
 - **Public Showcase**: Grid produk responsif dengan filter pencarian instan dan navigasi kategori.
 - **Admin Dashboard**: Halaman manajemen produk dan kategori khusus admin.
-- **Auto-Scraping**: Otomatis melengkapi data produk (nama, harga, gambar) dengan menyalin tautan Shopee/Tokopedia.
 - **Hybrid Database**: Mendukung penggunaan database lokal **MariaDB/MySQL** untuk pengembangan bebas-biaya (*local development*), dan **Supabase (PostgreSQL)** untuk server produksi.
+- **Data Migration Tool**: Script otomatis (`scripts/migrate.js`) untuk memigrasikan data kategori dan produk dari database lokal (MariaDB/MySQL) ke production (Supabase).
 - **Security Hardening**:
   - Semua endpoint API admin (`/api/admin/*`) dilindungi oleh middleware.
   - Cookie sesi ditandatangani secara kriptografis menggunakan **Web Crypto API HMAC SHA-256**.
-  - Proteksi terhadap kerentanan **Server-Side Request Forgery (SSRF)** pada modul scraping.
   - Bebas dari kerentanan SQL Injection dengan Prepared Statements.
 
 ---
@@ -25,7 +24,6 @@ Aplikasi dilengkapi dengan **Dashboard Admin** yang aman untuk mengelola kategor
 - **Framework**: Next.js 16 (App Router, Turbopack)
 - **Styling**: Tailwind CSS
 - **Icons**: Lucide React
-- **Scraping**: Cheerio
 - **Database**: mysql2 (MariaDB/MySQL) / @supabase/supabase-js (PostgreSQL)
 - **Token Signing**: Native Web Crypto API
 
@@ -68,6 +66,7 @@ ayp-affiliate/
 │   ├── types/               # TypeScript interfaces
 │   └── proxy.ts             # Authentication proxy middleware
 ├── supabase/                # SQL Schema files
+├── scripts/                 # Migration script and helper utilities
 ├── GUIDE.md                 # Database setup tutorial
 └── README.md                # Dokumentasi utama proyek
 ```
