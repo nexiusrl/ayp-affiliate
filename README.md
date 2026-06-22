@@ -34,8 +34,7 @@ Aplikasi dilengkapi dengan **Dashboard Admin** yang aman untuk mengelola kategor
 ## ⚙️ Cara Memulai
 
 ### 1. Setup Database
-Rincian petunjuk instalasi dan impor skema database lokal (MariaDB) maupun awan (Supabase) dapat dilihat pada dokumen:
-👉 **[PANDUAN SETUP DATABASE (GUIDE.md)](./GUIDE.md)**
+Skema database untuk MariaDB tersedia di `supabase/schema.mariadb.sql`, dan untuk Supabase di `supabase/schema.sql`. Silakan impor skema tersebut ke database masing-masing.
 
 ### 2. Konfigurasi Environment Variables
 Salin berkas `.env.example` menjadi `.env.local` dan lengkapi nilai variabelnya:
@@ -68,6 +67,5 @@ ayp-affiliate/
 │   ├── types/               # TypeScript interfaces
 │   └── proxy.ts             # Authentication proxy middleware
 ├── supabase/                # SQL Schema files
-├── GUIDE.md                 # Database setup tutorial
 └── README.md                # Dokumentasi utama proyek
 ```
