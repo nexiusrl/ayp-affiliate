@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { createSessionToken } from "@/lib/auth";
 
 const ADMIN_SESSION_COOKIE = "ayp_admin_session";
-const SESSION_VALUE = process.env.SESSION_SECRET || "ayp-affiliate-secret";
+const SESSION_SECRET = process.env.SESSION_SECRET || "ayp-affiliate-secret-key-32chars";
 const MAX_AGE = 60 * 60 * 24 * 7; // 7 days
 
 export async function POST(request: NextRequest) {
@@ -19,8 +20,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const token = await createSessionToken(SESSION_SECRET);
+
     const response = NextResponse.json({ success: true });
-    response.cookies.set(ADMIN_SESSION_COOKIE, SESSION_VALUE, {
+    response.cookies.set(ADMIN_SESSION_COOKIE, token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",

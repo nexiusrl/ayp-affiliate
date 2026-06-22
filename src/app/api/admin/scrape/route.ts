@@ -9,14 +9,29 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "URL tidak valid" }, { status: 400 });
     }
 
-    // Detect platform
-    const isShopee = url.includes("shopee.co.id");
+    let parsedUrl: URL;
+    try {
+      parsedUrl = new URL(url);
+    } catch {
+      return NextResponse.json({ error: "Format URL tidak valid" }, { status: 400 });
+    }
+
+    if (parsedUrl.protocol !== "http:" && parsedUrl.protocol !== "https:") {
+      return NextResponse.json(
+        { error: "Protokol URL tidak didukung (hanya http/https)" },
+        { status: 400 }
+      );
+    }
+
+    const host = parsedUrl.hostname.toLowerCase();
+    const isShopee = host === "shopee.co.id" || host.endsWith(".shopee.co.id") || host === "shope.ee";
     const isTokopedia =
-      url.includes("tokopedia.com") || url.includes("tokopedia.net");
+      host === "tokopedia.com" || host.endsWith(".tokopedia.com") ||
+      host === "tokopedia.net" || host.endsWith(".tokopedia.net");
 
     if (!isShopee && !isTokopedia) {
       return NextResponse.json(
-        { error: "Hanya mendukung link Shopee atau Tokopedia" },
+        { error: "Hanya mendukung domain Shopee atau Tokopedia resmi" },
         { status: 400 }
       );
     }
