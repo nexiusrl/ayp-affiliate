@@ -41,9 +41,9 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   const products = await db.getProducts({ categoryId: category.id, limit: 60 });
 
   return (
-    <>
+    <div className="flex flex-col min-h-screen">
       <Navbar />
-      <main id="main-content" className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+      <main id="main-content" className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6">
         {/* Category Filter */}
         <section className="mb-5" aria-label="Filter kategori">
           <Suspense fallback={null}>
@@ -67,6 +67,6 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
         </section>
       </main>
       <Footer />
-    </>
+    </div>
   );
 }
