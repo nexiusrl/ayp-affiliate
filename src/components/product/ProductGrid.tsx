@@ -20,8 +20,8 @@ export function ProductGrid({ products, className }: ProductGridProps) {
         className
       )}
     >
-      {products.map((product) => (
-        <ProductCard key={product.id} product={product} />
+      {products.map((product, index) => (
+        <ProductCard key={product.id} product={product} priority={index < 5} />
       ))}
     </div>
   );

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Package, Tag, LogOut, ShoppingBag } from "lucide-react";
+import { Package, Tag, LogOut, ShoppingBag, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -10,12 +10,17 @@ const navItems = [
   { href: "/admin/categories", label: "Kategori", icon: Tag },
 ];
 
-export function AdminSidebar() {
+interface AdminSidebarProps {
+  onClose?: () => void;
+}
+
+export function AdminSidebar({ onClose }: AdminSidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
 
   const handleLogout = async () => {
     await fetch("/api/admin/auth", { method: "DELETE" });
+    if (onClose) onClose();
     router.push("/admin/login");
     router.refresh();
   };
@@ -23,7 +28,7 @@ export function AdminSidebar() {
   return (
     <aside className="w-56 shrink-0 bg-white border-r border-[#E2E8F0] min-h-screen flex flex-col">
       {/* Header */}
-      <div className="p-4 border-b border-[#E2E8F0]">
+      <div className="p-4 border-b border-[#E2E8F0] flex items-center justify-between">
         <div className="flex items-center gap-2 text-[#0F172A]">
           <ShoppingBag size={18} className="text-[#2563EB]" />
           <div>
@@ -31,6 +36,15 @@ export function AdminSidebar() {
             <p className="text-[10px] text-[#64748B]">Admin Dashboard</p>
           </div>
         </div>
+        {onClose && (
+          <button
+            onClick={onClose}
+            className="md:hidden p-1.5 -mr-1 text-[#64748B] hover:text-[#0F172A] hover:bg-[#F8FAFC] rounded-lg transition-colors"
+            title="Tutup Menu"
+          >
+            <X size={16} />
+          </button>
+        )}
       </div>
 
       {/* Nav */}
@@ -42,6 +56,7 @@ export function AdminSidebar() {
             <Link
               key={href}
               href={href}
+              onClick={() => onClose && onClose()}
               className={cn(
                 "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-150",
                 isActive

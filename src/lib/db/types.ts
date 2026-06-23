@@ -4,6 +4,8 @@ export interface ProductQuery {
   search?: string;
   categoryId?: string;
   limit?: number;
+  offset?: number;
+  sort?: "cheapest" | "expensive" | "newest";
   includeInactive?: boolean;
 }
 
@@ -32,6 +34,7 @@ export interface IDatabase {
   createProduct(data: CreateProductData): Promise<Product>;
   updateProduct(id: string, data: UpdateProductData): Promise<Product>;
   deleteProduct(id: string): Promise<void>;
+  incrementClickCount(id: string): Promise<void>;
 
   // Categories
   getCategories(): Promise<Category[]>;

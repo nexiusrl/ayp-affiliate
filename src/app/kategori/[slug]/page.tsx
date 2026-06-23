@@ -7,9 +7,12 @@ import { Footer } from "@/components/layout/Footer";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { CategoryFilter } from "@/components/product/CategoryFilter";
 import { ProductGridSkeleton } from "@/components/ui/Skeleton";
+import { SortSelect } from "@/components/product/SortSelect";
+import { LoadMore } from "@/components/product/LoadMore";
 
 interface CategoryPageProps {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ q?: string; sort?: string; limit?: string }>;
 }
 
 export async function generateMetadata({
@@ -26,8 +29,12 @@ export async function generateMetadata({
   };
 }
 
-export default async function CategoryPage({ params }: CategoryPageProps) {
+export default async function CategoryPage({ params, searchParams }: CategoryPageProps) {
   const { slug } = await params;
+  const { q: search, sort, limit } = await searchParams;
+
+  const currentLimit = parseInt(limit || "12", 10);
+  const currentSort = (sort || "newest") as "newest" | "cheapest" | "expensive";
 
   // Verify category exists
   const category = await db.getCategoryBySlug(slug);
@@ -37,8 +44,16 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   // Fetch all categories for filter
   const categories = await db.getCategories();
 
-  // Fetch products in this category
-  const products = await db.getProducts({ categoryId: category.id, limit: 60 });
+  // Fetch products in this category (fetch limit + 1 to detect hasMore)
+  const products = await db.getProducts({ 
+    categoryId: category.id, 
+    search,
+    limit: currentLimit + 1, 
+    sort: currentSort 
+  });
+
+  const hasMore = products.length > currentLimit;
+  const displayProducts = hasMore ? products.slice(0, currentLimit) : products;
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -51,19 +66,30 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
           </Suspense>
         </section>
 
-        {/* Heading */}
-        <h1 className="text-lg font-bold text-[#0F172A] mb-4">
-          {category.name}
-          <span className="text-sm font-normal text-[#64748B] ml-2">
-            ({products?.length ?? 0} produk)
-          </span>
-        </h1>
+        {/* Heading & Sort Tool bar */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5 border-b border-[#F1F5F9] pb-3">
+          <div>
+            <h1 className="text-sm font-bold text-[#0F172A] flex items-center gap-2">
+              <span>Kategori: {category.name}</span>
+              <span className="text-xs font-normal text-[#64748B] bg-[#F1F5F9] px-2 py-0.5 rounded-full">
+                {hasMore ? `${currentLimit}+` : displayProducts.length} produk
+              </span>
+            </h1>
+            {search && (
+              <p className="text-xs text-[#64748B] mt-1">
+                Filter kata kunci: &ldquo;{search}&rdquo;
+              </p>
+            )}
+          </div>
+          <SortSelect />
+        </div>
 
         {/* Product Grid */}
         <section aria-label={`Produk ${category.name}`}>
           <Suspense fallback={<ProductGridSkeleton count={10} />}>
-            <ProductGrid products={products ?? []} />
+            <ProductGrid products={displayProducts} />
           </Suspense>
+          <LoadMore currentLimit={currentLimit} hasMore={hasMore} />
         </section>
       </main>
       <Footer />

@@ -13,25 +13,35 @@ function getClient() {
 export const supabaseDb: IDatabase = {
   // ── Products ──────────────────────────────────────────────────
 
-  async getProducts({ search, categoryId, limit = 60, includeInactive } = {}): Promise<Product[]> {
+  async getProducts({ search, categoryId, limit = 60, offset = 0, sort = "newest", includeInactive } = {}): Promise<Product[]> {
     const client = getClient();
-    let q = client
+    let queryBuilder = client
       .from("products")
-      .select("*, categories(id, name, slug)")
-      .order("created_at", { ascending: false })
-      .limit(limit);
+      .select("*, categories(id, name, slug)");
 
     if (!includeInactive) {
-      q = q.eq("is_active", true);
+      queryBuilder = queryBuilder.eq("is_active", true);
     }
     if (search) {
-      q = q.or(`name.ilike.%${search}%,description.ilike.%${search}%`);
+      queryBuilder = queryBuilder.or(`name.ilike.%${search}%,description.ilike.%${search}%`);
     }
     if (categoryId) {
-      q = q.eq("category_id", categoryId);
+      queryBuilder = queryBuilder.eq("category_id", categoryId);
     }
 
-    const { data, error } = await q;
+    // Sort logic
+    if (sort === "cheapest") {
+      queryBuilder = queryBuilder.order("price", { ascending: true });
+    } else if (sort === "expensive") {
+      queryBuilder = queryBuilder.order("price", { ascending: false });
+    } else {
+      queryBuilder = queryBuilder.order("created_at", { ascending: false });
+    }
+
+    // Range pagination
+    queryBuilder = queryBuilder.range(offset, offset + limit - 1);
+
+    const { data, error } = await queryBuilder;
     if (error) throw new Error(error.message);
     return (data ?? []) as unknown as Product[];
   },
@@ -84,12 +94,35 @@ export const supabaseDb: IDatabase = {
     if (error) throw new Error(error.message);
   },
 
+  async incrementClickCount(id: string): Promise<void> {
+    const client = getClient();
+    const product = await this.getProductById(id);
+    if (product) {
+      const currentCount = product.click_count || 0;
+      await client
+        .from("products")
+        .update({ click_count: currentCount + 1 })
+        .eq("id", id);
+    }
+  },
+
   // ── Categories ────────────────────────────────────────────────
 
   async getCategories(): Promise<Category[]> {
     const client = getClient();
-    const { data } = await client.from("categories").select("*").order("name");
-    return (data ?? []) as Category[];
+    const { data } = await client.from("categories").select("*, products(id, is_active)");
+    const categories = (data ?? []).map((cat: any) => {
+      const activeProducts = cat.products ? cat.products.filter((p: any) => p.is_active) : [];
+      return {
+        id: cat.id,
+        name: cat.name,
+        slug: cat.slug,
+        created_at: cat.created_at,
+        product_count: activeProducts.length
+      };
+    });
+    // Sort by name
+    return categories.sort((a, b) => a.name.localeCompare(b.name));
   },
 
   async getCategoryBySlug(slug: string): Promise<Category | null> {

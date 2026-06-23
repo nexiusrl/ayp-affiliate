@@ -33,6 +33,7 @@ CREATE TABLE IF NOT EXISTS products (
   platform      ENUM('shopee', 'tokopedia') NOT NULL,
   category_id   CHAR(36),
   is_active     TINYINT(1)     NOT NULL DEFAULT 1,
+  click_count   INT            NOT NULL DEFAULT 0,
   created_at    DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
   KEY idx_category_id (category_id),

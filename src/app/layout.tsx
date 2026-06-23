@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ToastProvider } from "@/components/ui/Toast";
+import { BackToTop } from "@/components/product/BackToTop";
 
 export const metadata: Metadata = {
   title: {
@@ -25,7 +26,10 @@ export default function RootLayout({
   return (
     <html lang="id" data-scroll-behavior="smooth">
       <body>
-        <ToastProvider>{children}</ToastProvider>
+        <ToastProvider>
+          {children}
+          <BackToTop />
+        </ToastProvider>
       </body>
     </html>
   );

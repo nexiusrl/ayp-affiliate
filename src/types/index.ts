@@ -5,6 +5,7 @@ export interface Category {
   name: string;
   slug: string;
   created_at: string;
+  product_count?: number;
 }
 
 export interface Product {
@@ -17,6 +18,7 @@ export interface Product {
   platform: Platform;
   category_id: string | null;
   is_active: boolean;
+  click_count: number;
   created_at: string;
   categories?: Category | null;
 }

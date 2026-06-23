@@ -6,6 +6,8 @@ import { Footer } from "@/components/layout/Footer";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { CategoryFilter } from "@/components/product/CategoryFilter";
 import { ProductGridSkeleton } from "@/components/ui/Skeleton";
+import { SortSelect } from "@/components/product/SortSelect";
+import { LoadMore } from "@/components/product/LoadMore";
 
 export const metadata: Metadata = {
   title: "AYP Affiliate — Temukan Produk Terbaik",
@@ -14,17 +16,27 @@ export const metadata: Metadata = {
 };
 
 interface HomePageProps {
-  searchParams: Promise<{ q?: string; kategori?: string }>;
+  searchParams: Promise<{ q?: string; sort?: string; limit?: string }>;
 }
 
 export default async function HomePage({ searchParams }: HomePageProps) {
-  const { q: search } = await searchParams;
+  const { q: search, sort, limit } = await searchParams;
+
+  const currentLimit = parseInt(limit || "12", 10);
+  const currentSort = (sort || "newest") as "newest" | "cheapest" | "expensive";
 
   // Fetch categories for filter
   const categories = await db.getCategories();
 
-  // Fetch products
-  const products = await db.getProducts({ search, limit: 60 });
+  // Fetch products (fetch limit + 1 to detect hasMore)
+  const products = await db.getProducts({ 
+    search, 
+    limit: currentLimit + 1, 
+    sort: currentSort 
+  });
+
+  const hasMore = products.length > currentLimit;
+  const displayProducts = hasMore ? products.slice(0, currentLimit) : products;
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -37,22 +49,32 @@ export default async function HomePage({ searchParams }: HomePageProps) {
           </Suspense>
         </section>
 
-        {/* Search result label */}
-        {search && (
-          <p className="text-sm text-[#64748B] mb-4">
-            Hasil pencarian untuk{" "}
-            <span className="font-semibold text-[#0F172A]">
-              &ldquo;{search}&rdquo;
-            </span>{" "}
-            — {products?.length ?? 0} produk ditemukan
-          </p>
-        )}
+        {/* Header toolbar: Search info and Sort select */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5 border-b border-[#F1F5F9] pb-3">
+          <div>
+            {search ? (
+              <p className="text-sm text-[#64748B]">
+                Hasil pencarian untuk{" "}
+                <span className="font-semibold text-[#0F172A]">
+                  &ldquo;{search}&rdquo;
+                </span>{" "}
+                — {hasMore ? `${currentLimit}+` : displayProducts.length} produk ditemukan
+              </p>
+            ) : (
+              <p className="text-xs font-semibold text-[#64748B] uppercase tracking-wider">
+                Rekomendasi Produk
+              </p>
+            )}
+          </div>
+          <SortSelect />
+        </div>
 
         {/* Product Grid */}
         <section aria-label="Daftar produk">
           <Suspense fallback={<ProductGridSkeleton count={10} />}>
-            <ProductGrid products={products ?? []} />
+            <ProductGrid products={displayProducts} />
           </Suspense>
+          <LoadMore currentLimit={currentLimit} hasMore={hasMore} />
         </section>
       </main>
       <Footer />

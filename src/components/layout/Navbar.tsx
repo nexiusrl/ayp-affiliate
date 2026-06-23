@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { Search, ShoppingBag } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useRef } from "react";
+import { Search, ShoppingBag, Loader2 } from "lucide-react";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import { useCallback, useRef, useState, useTransition } from "react";
 
 function useDebounce<T extends (...args: Parameters<T>) => void>(
   fn: T,
@@ -22,7 +22,11 @@ function useDebounce<T extends (...args: Parameters<T>) => void>(
 export function Navbar() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const pathname = usePathname();
   const currentSearch = searchParams.get("q") || "";
+
+  const [isPending, startTransition] = useTransition();
+  const [isSearching, setIsSearching] = useState(false);
 
   const handleSearch = useCallback(
     (value: string) => {
@@ -32,13 +36,27 @@ export function Navbar() {
       } else {
         params.delete("q");
       }
-      params.delete("kategori");
-      router.push(`/?${params.toString()}`);
+      // Reset limit on search to avoid offset mismatches
+      params.delete("limit");
+
+      const targetPath = pathname.startsWith("/kategori/") ? pathname : "/";
+
+      startTransition(() => {
+        router.push(`${targetPath}?${params.toString()}`);
+        setIsSearching(false);
+      });
     },
-    [router, searchParams]
+    [router, searchParams, pathname]
   );
 
   const debouncedSearch = useDebounce(handleSearch, 300);
+
+  const onInputChange = (val: string) => {
+    setIsSearching(true);
+    debouncedSearch(val);
+  };
+
+  const showLoading = isPending || isSearching;
 
   return (
     <header className="sticky top-0 z-40 bg-white border-b border-[#E2E8F0] shadow-sm">
@@ -54,15 +72,22 @@ export function Navbar() {
 
         {/* Search Bar */}
         <div className="flex-1 relative max-w-xl">
-          <Search
-            size={16}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-[#64748B] pointer-events-none"
-          />
+          {showLoading ? (
+            <Loader2
+              size={16}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-[#2563EB] animate-spin"
+            />
+          ) : (
+            <Search
+              size={16}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-[#64748B] pointer-events-none"
+            />
+          )}
           <input
             type="search"
-            placeholder="Cari produk..."
+            placeholder={pathname.startsWith("/kategori/") ? "Cari di kategori ini..." : "Cari produk..."}
             defaultValue={currentSearch}
-            onChange={(e) => debouncedSearch(e.target.value)}
+            onChange={(e) => onInputChange(e.target.value)}
             className="w-full pl-9 pr-4 py-2 text-sm rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] text-[#0F172A] placeholder:text-[#64748B] focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:bg-white transition-all duration-200"
             aria-label="Cari produk"
           />
