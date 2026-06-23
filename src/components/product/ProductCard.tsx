@@ -16,7 +16,7 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
   const [imageLoading, setImageLoading] = useState(true);
 
   const handleClick = () => {
-    window.open(`/api/products/${product.id}/click`, "_blank", "noopener,noreferrer");
+    window.open(product.affiliate_url, "_blank", "noopener,noreferrer");
   };
 
   return (

@@ -34,7 +34,6 @@ export interface IDatabase {
   createProduct(data: CreateProductData): Promise<Product>;
   updateProduct(id: string, data: UpdateProductData): Promise<Product>;
   deleteProduct(id: string): Promise<void>;
-  incrementClickCount(id: string): Promise<void>;
 
   // Categories
   getCategories(): Promise<Category[]>;

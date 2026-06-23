@@ -29,7 +29,6 @@ create table if not exists products (
   platform text not null check (platform in ('shopee', 'tokopedia')),
   category_id uuid references categories(id) on delete set null,
   is_active boolean not null default true,
-  click_count integer not null default 0,
   created_at timestamptz default now() not null
 );
 

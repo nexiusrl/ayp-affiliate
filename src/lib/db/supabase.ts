@@ -94,18 +94,6 @@ export const supabaseDb: IDatabase = {
     if (error) throw new Error(error.message);
   },
 
-  async incrementClickCount(id: string): Promise<void> {
-    const client = getClient();
-    const product = await this.getProductById(id);
-    if (product) {
-      const currentCount = product.click_count || 0;
-      await client
-        .from("products")
-        .update({ click_count: currentCount + 1 })
-        .eq("id", id);
-    }
-  },
-
   // ── Categories ────────────────────────────────────────────────
 
   async getCategories(): Promise<Category[]> {

@@ -93,9 +93,6 @@ export function ProductTable({ products }: ProductTableProps) {
                 <th className="text-left px-4 py-3 text-xs font-semibold text-[#64748B] hidden md:table-cell">
                   Kategori
                 </th>
-                <th className="text-left px-4 py-3 text-xs font-semibold text-[#64748B] hidden md:table-cell w-16">
-                  Klik
-                </th>
                 <th className="text-left px-4 py-3 text-xs font-semibold text-[#64748B]">
                   Status
                 </th>
@@ -151,11 +148,6 @@ export function ProductTable({ products }: ProductTableProps) {
                   {/* Category */}
                   <td className="px-4 py-3 hidden md:table-cell text-[#64748B] text-xs">
                     {product.categories?.name || "—"}
-                  </td>
-
-                  {/* Klik */}
-                  <td className="px-4 py-3 hidden md:table-cell text-[#64748B] font-mono text-xs">
-                    {product.click_count || 0}
                   </td>
 
                   {/* Status */}

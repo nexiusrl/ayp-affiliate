@@ -18,7 +18,6 @@ export interface Product {
   platform: Platform;
   category_id: string | null;
   is_active: boolean;
-  click_count: number;
   created_at: string;
   categories?: Category | null;
 }

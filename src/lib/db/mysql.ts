@@ -52,7 +52,6 @@ interface ProductRow {
   platform: "shopee" | "tokopedia";
   category_id: string | null;
   is_active: boolean;
-  click_count: number;
   created_at: string;
   category_name: string | null;
   category_slug: string | null;
@@ -69,7 +68,6 @@ function mapProduct(row: ProductRow): Product {
     platform: row.platform,
     category_id: row.category_id,
     is_active: row.is_active,
-    click_count: row.click_count,
     created_at: row.created_at as unknown as string,
     categories: row.category_id
       ? { id: row.category_id, name: row.category_name!, slug: row.category_slug!, created_at: "" }
@@ -185,10 +183,6 @@ export const mysqlDb: IDatabase = {
 
   async deleteProduct(id: string): Promise<void> {
     await query("DELETE FROM products WHERE id = ?", [id]);
-  },
-
-  async incrementClickCount(id: string): Promise<void> {
-    await query("UPDATE products SET click_count = click_count + 1 WHERE id = ?", [id]);
   },
 
   // ── Categories ────────────────────────────────────────────────
