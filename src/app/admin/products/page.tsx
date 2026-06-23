@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { Plus } from "lucide-react";
+import { Plus, Upload } from "lucide-react";
 import { db } from "@/lib/db";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { ProductTable } from "@/components/admin/ProductTable";
@@ -23,12 +23,20 @@ export default async function AdminProductsPage() {
             {products?.length ?? 0} produk terdaftar
           </p>
         </div>
-        <Link href="/admin/products/new">
-          <Button>
-            <Plus size={16} />
-            Tambah Produk
-          </Button>
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link href="/admin/products/import">
+            <Button variant="outline">
+              <Upload size={16} />
+              Impor CSV
+            </Button>
+          </Link>
+          <Link href="/admin/products/new">
+            <Button>
+              <Plus size={16} />
+              Tambah Produk
+            </Button>
+          </Link>
+        </div>
       </div>
       <ProductTable products={products ?? []} />
     </AdminLayout>
