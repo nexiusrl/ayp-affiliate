@@ -1,8 +1,16 @@
-# AYP Affiliate
+<p align="center">
+  <img src="public/logo.png" alt="AYP Affiliate Logo" width="120" height="120" />
+</p>
 
-AYP Affiliate adalah platform showcase produk afiliasi yang dibangun menggunakan **Next.js** (App Router). Aplikasi ini dirancang untuk menampilkan produk-produk terbaik dari marketplace seperti Shopee dan Tokopedia dengan dukungan filter kategori dan pencarian cepat.
+<h1 align="center">AYP Affiliate</h1>
 
-Aplikasi dilengkapi dengan **Dashboard Admin** yang aman untuk mengelola kategori dan produk secara manual.
+<p align="center">
+  <strong>AYP Affiliate</strong> adalah platform showcase produk afiliasi yang dibangun menggunakan <strong>Next.js (App Router)</strong>. Aplikasi ini dirancang untuk menampilkan produk-produk terbaik dari marketplace seperti Shopee dan Tokopedia dengan dukungan filter kategori dan pencarian cepat.
+</p>
+
+<p align="center">
+  Aplikasi dilengkapi dengan <strong>Dashboard Admin</strong> yang aman untuk mengelola kategori dan produk secara manual.
+</p>
 
 ---
 
