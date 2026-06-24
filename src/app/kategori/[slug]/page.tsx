@@ -36,13 +36,13 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
   const currentLimit = parseInt(limit || "12", 10);
   const currentSort = (sort || "newest") as "newest" | "cheapest" | "expensive";
 
-  // Verify category exists
-  const category = await db.getCategoryBySlug(slug);
+  // Fetch category details and all categories in parallel to optimize TTFB
+  const [category, categories] = await Promise.all([
+    db.getCategoryBySlug(slug),
+    db.getCategories(),
+  ]);
 
   if (!category) notFound();
-
-  // Fetch all categories for filter
-  const categories = await db.getCategories();
 
   // Fetch products in this category (fetch limit + 1 to detect hasMore)
   const products = await db.getProducts({ 

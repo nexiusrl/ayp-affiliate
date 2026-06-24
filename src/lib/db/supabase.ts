@@ -1,13 +1,18 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import type { IDatabase, ProductQuery, CreateProductData, UpdateProductData, CreateCategoryData } from "./types";
 import type { Product, Category } from "@/types";
 
+let clientInstance: SupabaseClient<any> | null = null;
+
 function getClient() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    { auth: { persistSession: false } }
-  );
+  if (!clientInstance) {
+    clientInstance = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      { auth: { persistSession: false } }
+    );
+  }
+  return clientInstance;
 }
 
 export const supabaseDb: IDatabase = {

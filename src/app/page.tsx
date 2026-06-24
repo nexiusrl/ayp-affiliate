@@ -25,15 +25,15 @@ export default async function HomePage({ searchParams }: HomePageProps) {
   const currentLimit = parseInt(limit || "12", 10);
   const currentSort = (sort || "newest") as "newest" | "cheapest" | "expensive";
 
-  // Fetch categories for filter
-  const categories = await db.getCategories();
-
-  // Fetch products (fetch limit + 1 to detect hasMore)
-  const products = await db.getProducts({ 
-    search, 
-    limit: currentLimit + 1, 
-    sort: currentSort 
-  });
+  // Fetch categories and products in parallel to reduce database query roundtrip time (TTFB)
+  const [categories, products] = await Promise.all([
+    db.getCategories(),
+    db.getProducts({
+      search,
+      limit: currentLimit + 1,
+      sort: currentSort,
+    }),
+  ]);
 
   const hasMore = products.length > currentLimit;
   const displayProducts = hasMore ? products.slice(0, currentLimit) : products;

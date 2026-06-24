@@ -3,6 +3,7 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   devIndicators: false,
   images: {
+    formats: ["image/avif", "image/webp"],
     remotePatterns: [
       // Shopee CDN
       { protocol: "https", hostname: "**.shpimg.com" },
