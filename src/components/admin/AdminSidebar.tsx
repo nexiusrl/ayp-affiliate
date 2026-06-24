@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { Package, Tag, LogOut, ShoppingBag, X } from "lucide-react";
+import { Package, Tag, LogOut, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -30,7 +31,13 @@ export function AdminSidebar({ onClose }: AdminSidebarProps) {
       {/* Header */}
       <div className="p-4 border-b border-[#E2E8F0] flex items-center justify-between">
         <div className="flex items-center gap-2 text-[#0F172A]">
-          <ShoppingBag size={18} className="text-[#2563EB]" />
+          <Image
+            src="/logo.png"
+            alt="Logo AYP Affiliate"
+            width={20}
+            height={20}
+            className="w-5 h-5 object-contain"
+          />
           <div>
             <p className="text-sm font-semibold">AYP Affiliate</p>
             <p className="text-[10px] text-[#64748B]">Admin Dashboard</p>

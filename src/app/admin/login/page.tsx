@@ -2,7 +2,8 @@
 
 import { Suspense, useState, type FormEvent } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ShoppingBag, Lock, User } from "lucide-react";
+import Image from "next/image";
+import { Lock, User } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 
@@ -104,7 +105,13 @@ export default function AdminLoginPage() {
         {/* Header */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-[#EFF6FF] mb-4">
-            <ShoppingBag size={22} className="text-[#2563EB]" />
+            <Image
+              src="/logo.png"
+              alt="Logo AYP Affiliate"
+              width={24}
+              height={24}
+              className="w-6 h-6 object-contain"
+            />
           </div>
           <h1 className="text-xl font-bold text-[#0F172A]">AYP Affiliate</h1>
           <p className="text-sm text-[#64748B] mt-1">Admin Dashboard</p>

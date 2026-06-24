@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Search, ShoppingBag, Loader2 } from "lucide-react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useCallback, useRef, useState, useTransition } from "react";
@@ -66,7 +67,13 @@ export function Navbar() {
           href="/"
           className="flex items-center gap-2 font-bold text-[#0F172A] shrink-0 hover:opacity-80 transition-opacity"
         >
-          <ShoppingBag size={20} className="text-[#2563EB]" />
+          <Image
+            src="/logo.png"
+            alt="Logo AYP Affiliate"
+            width={24}
+            height={24}
+            className="w-6 h-6 object-contain"
+          />
           <span className="hidden sm:block text-sm">AYP Affiliate</span>
         </Link>
 

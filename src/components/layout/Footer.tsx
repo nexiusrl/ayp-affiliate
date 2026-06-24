@@ -1,6 +1,6 @@
 import Link from "next/link";
+import Image from "next/image";
 import { db } from "@/lib/db";
-import { ShoppingBag } from "lucide-react";
 
 export async function Footer() {
   const categories = await db.getCategories();
@@ -11,7 +11,13 @@ export async function Footer() {
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
           {/* Brand */}
           <div className="flex items-center gap-2 text-[#0F172A]">
-            <ShoppingBag size={18} className="text-[#2563EB]" />
+            <Image
+              src="/logo.png"
+              alt="Logo AYP Affiliate"
+              width={20}
+              height={20}
+              className="w-5 h-5 object-contain"
+            />
             <span className="font-semibold text-sm">AYP Affiliate</span>
           </div>
 

@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Menu, ShoppingBag } from "lucide-react";
+import Image from "next/image";
+import { Menu } from "lucide-react";
 import { AdminSidebar } from "./AdminSidebar";
 import { cn } from "@/lib/utils";
 
@@ -17,7 +18,13 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       {/* Mobile Top Header */}
       <header className="md:hidden h-14 bg-white border-b border-[#E2E8F0] px-4 flex items-center justify-between sticky top-0 z-30 shrink-0">
         <div className="flex items-center gap-2 text-[#0F172A]">
-          <ShoppingBag size={18} className="text-[#2563EB]" />
+          <Image
+            src="/logo.png"
+            alt="Logo AYP Affiliate"
+            width={20}
+            height={20}
+            className="w-5 h-5 object-contain"
+          />
           <div>
             <p className="text-xs font-bold leading-tight">AYP Affiliate</p>
             <p className="text-[9px] text-[#64748B]">Admin Panel</p>
