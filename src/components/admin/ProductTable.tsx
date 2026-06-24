@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -9,7 +9,7 @@ import { type Product } from "@/types";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Modal } from "@/components/ui/Modal";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice, cn } from "@/lib/utils";
 import { useToast } from "@/components/ui/Toast";
 
 interface ProductTableProps {
@@ -23,6 +23,8 @@ export function ProductTable({ products }: ProductTableProps) {
   const [deleting, setDeleting] = useState(false);
   const [togglingId, setTogglingId] = useState<string | null>(null);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   // Get unique categories from products list
   const categories = Array.from(
@@ -39,6 +41,17 @@ export function ProductTable({ products }: ProductTableProps) {
     : products.filter(
         (p) => p.category_id === selectedCategoryId || p.categories?.id === selectedCategoryId
       );
+
+  // Reset page to 1 when filters or page size changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedCategoryId, pageSize]);
+
+  const totalPages = Math.ceil(filteredProducts.length / pageSize);
+  const paginatedProducts = filteredProducts.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
 
   const handleDelete = async () => {
     if (!deleteId) return;
@@ -110,140 +123,180 @@ export function ProductTable({ products }: ProductTableProps) {
         </select>
       </div>
 
-      <div className="bg-white rounded-xl border border-[#E2E8F0] overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-[#E2E8F0] bg-[#F8FAFC]">
-                <th className="text-left px-4 py-3 text-xs font-semibold text-[#64748B] w-12">
-                  Img
-                </th>
-                <th className="text-left px-4 py-3 text-xs font-semibold text-[#64748B]">
-                  Nama Produk
-                </th>
-                <th className="text-left px-4 py-3 text-xs font-semibold text-[#64748B] hidden sm:table-cell">
-                  Harga
-                </th>
-                <th className="text-left px-4 py-3 text-xs font-semibold text-[#64748B] hidden md:table-cell">
-                  Platform
-                </th>
-                <th className="text-left px-4 py-3 text-xs font-semibold text-[#64748B] hidden md:table-cell">
-                  Kategori
-                </th>
-                <th className="text-left px-4 py-3 text-xs font-semibold text-[#64748B]">
-                  Status
-                </th>
-                <th className="text-right px-4 py-3 text-xs font-semibold text-[#64748B]">
-                  Aksi
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredProducts.length === 0 ? (
-                <tr>
-                  <td colSpan={7} className="text-center py-8 text-[#64748B] text-sm">
-                    Tidak ada produk dalam kategori ini.
-                  </td>
-                </tr>
-              ) : (
-                filteredProducts.map((product, i) => (
-                <tr
-                  key={product.id}
-                  className={`border-b border-[#E2E8F0] last:border-0 hover:bg-[#F8FAFC] transition-colors ${
-                    !product.is_active ? "opacity-50" : ""
-                  }`}
-                >
-                  {/* Image */}
-                  <td className="px-4 py-3">
-                    <div className="w-10 h-10 rounded-lg overflow-hidden bg-[#F8FAFC] border border-[#E2E8F0] relative">
-                      {product.image_url ? (
-                        <Image
-                          src={product.image_url}
-                          alt={product.name}
-                          fill
-                          sizes="40px"
-                          className="object-cover"
-                        />
-                      ) : (
-                        <span className="flex items-center justify-center h-full text-lg">
-                          📦
-                        </span>
-                      )}
-                    </div>
-                  </td>
-
-                  {/* Name */}
-                  <td className="px-4 py-3">
-                    <p className="font-medium text-[#0F172A] line-clamp-1 max-w-[200px]">
-                      {product.name}
-                    </p>
-                  </td>
-
-                  {/* Price */}
-                  <td className="px-4 py-3 hidden sm:table-cell text-[#64748B]">
-                    {formatPrice(product.price)}
-                  </td>
-
-                  {/* Platform */}
-                  <td className="px-4 py-3 hidden md:table-cell">
-                    <Badge platform={product.platform} />
-                  </td>
-
-                  {/* Category */}
-                  <td className="px-4 py-3 hidden md:table-cell text-[#64748B] text-xs">
-                    {product.categories?.name || "—"}
-                  </td>
-
-                  {/* Status */}
-                  <td className="px-4 py-3">
-                    <span
-                      className={`text-xs font-medium px-2 py-0.5 rounded-full ${
-                        product.is_active
-                          ? "bg-green-100 text-green-700"
-                          : "bg-gray-100 text-gray-500"
-                      }`}
-                    >
-                      {product.is_active ? "Aktif" : "Nonaktif"}
-                    </span>
-                  </td>
-
-                  {/* Actions */}
-                  <td className="px-4 py-3">
-                    <div className="flex items-center justify-end gap-1">
-                      <button
-                        onClick={() => handleToggle(product)}
-                        disabled={togglingId === product.id}
-                        className="p-1.5 rounded-lg text-[#64748B] hover:bg-[#F8FAFC] hover:text-[#0F172A] transition-colors disabled:opacity-50"
-                        title={product.is_active ? "Sembunyikan" : "Aktifkan"}
-                      >
-                        {product.is_active ? (
-                          <EyeOff size={15} />
-                        ) : (
-                          <Eye size={15} />
-                        )}
-                      </button>
-                      <Link
-                        href={`/admin/products/${product.id}/edit`}
-                        className="p-1.5 rounded-lg text-[#64748B] hover:bg-[#EFF6FF] hover:text-[#2563EB] transition-colors"
-                        title="Edit"
-                      >
-                        <Edit2 size={15} />
-                      </Link>
-                      <button
-                        onClick={() => setDeleteId(product.id)}
-                        className="p-1.5 rounded-lg text-[#64748B] hover:bg-red-50 hover:text-red-500 transition-colors"
-                        title="Hapus"
-                      >
-                        <Trash2 size={15} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              )))}
-            </tbody>
-          </table>
+      {filteredProducts.length === 0 ? (
+        <div className="bg-white rounded-xl border border-[#E2E8F0] p-12 text-center">
+          <p className="text-sm text-[#64748B]">
+            Tidak ada produk dalam kategori ini.
+          </p>
         </div>
-      </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+          {paginatedProducts.map((product) => (
+            <div
+              key={product.id}
+              className={cn(
+                "bg-white rounded-xl border border-[#E2E8F0] overflow-hidden flex flex-col justify-between hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] transition-all duration-200",
+                !product.is_active && "opacity-70 bg-[#F8FAFC]"
+              )}
+            >
+              {/* Image & Overlay */}
+              <div className="relative aspect-square w-full overflow-hidden bg-[#F8FAFC] border-b border-[#E2E8F0]">
+                {product.image_url ? (
+                  <Image
+                    src={product.image_url}
+                    alt={product.name}
+                    fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 33vw, 25vw"
+                    className="object-cover"
+                  />
+                ) : (
+                  <div className="absolute inset-0 flex items-center justify-center text-3xl">
+                    📦
+                  </div>
+                )}
+                {/* Badges */}
+                <div className="absolute top-2 left-2 flex flex-col gap-1">
+                  <Badge platform={product.platform} />
+                </div>
+                <div className="absolute top-2 right-2">
+                  <span
+                    className={cn(
+                      "text-[10px] font-bold px-2 py-0.5 rounded-full border shadow-sm backdrop-blur-md",
+                      product.is_active
+                        ? "bg-green-100 text-green-700 border-green-200"
+                        : "bg-gray-100 text-gray-500 border-gray-200"
+                    )}
+                  >
+                    {product.is_active ? "Aktif" : "Nonaktif"}
+                  </span>
+                </div>
+              </div>
+
+              {/* Info */}
+              <div className="p-4 flex flex-col gap-1.5 flex-grow">
+                <span className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider">
+                  {product.categories?.name || "Tanpa Kategori"}
+                </span>
+                <h3
+                  className="text-sm font-semibold text-[#0F172A] line-clamp-2 leading-snug min-h-[40px]"
+                  title={product.name}
+                >
+                  {product.name}
+                </h3>
+                <p className="text-base font-bold text-[#2563EB] mt-auto">
+                  {formatPrice(product.price)}
+                </p>
+              </div>
+
+              {/* Actions Footer */}
+              <div className="px-4 py-3 bg-[#F8FAFC] border-t border-[#E2E8F0] flex items-center justify-between">
+                <button
+                  onClick={() => handleToggle(product)}
+                  disabled={togglingId === product.id}
+                  className="flex items-center gap-1.5 text-xs text-[#64748B] hover:text-[#0F172A] font-medium disabled:opacity-50 transition-colors"
+                >
+                  {product.is_active ? (
+                    <>
+                      <EyeOff size={14} />
+                      Sembunyikan
+                    </>
+                  ) : (
+                    <>
+                      <Eye size={14} />
+                      Tampilkan
+                    </>
+                  )}
+                </button>
+
+                <div className="flex items-center gap-1">
+                  <Link
+                    href={`/admin/products/${product.id}/edit`}
+                    className="p-1.5 rounded-lg text-[#64748B] hover:bg-[#EFF6FF] hover:text-[#2563EB] transition-colors"
+                    title="Edit"
+                  >
+                    <Edit2 size={15} />
+                  </Link>
+                  <button
+                    onClick={() => setDeleteId(product.id)}
+                    className="p-1.5 rounded-lg text-[#64748B] hover:bg-red-50 hover:text-red-500 transition-colors"
+                    title="Hapus"
+                  >
+                    <Trash2 size={15} />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Pagination Bar */}
+      {filteredProducts.length > 0 && (
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6 bg-white p-4 rounded-xl border border-[#E2E8F0]">
+          {/* Page Sizer */}
+          <div className="flex items-center gap-2 text-sm text-[#64748B]">
+            <span>Tampilkan</span>
+            <select
+              value={pageSize}
+              onChange={(e) => setPageSize(Number(e.target.value))}
+              className="border border-[#E2E8F0] rounded-lg px-2 py-1 text-xs bg-white text-[#0F172A] focus:outline-none focus:ring-1 focus:ring-[#2563EB]"
+            >
+              <option value={10}>10</option>
+              <option value={12}>12</option>
+              <option value={15}>15</option>
+              <option value={20}>20</option>
+            </select>
+            <span>produk per halaman</span>
+          </div>
+
+          {/* Info */}
+          <div className="text-sm text-[#64748B]">
+            Menampilkan <span className="font-medium text-[#0F172A]">{(currentPage - 1) * pageSize + 1}</span>-
+            <span className="font-medium text-[#0F172A]">{Math.min(currentPage * pageSize, filteredProducts.length)}</span> dari{" "}
+            <span className="font-medium text-[#0F172A]">{filteredProducts.length}</span> produk
+          </div>
+
+          {/* Buttons */}
+          <div className="flex items-center gap-1">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              className="h-8 px-2 text-xs"
+            >
+              Sebelumnya
+            </Button>
+
+            <div className="flex items-center gap-0.5">
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                <button
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
+                  className={cn(
+                    "w-8 h-8 rounded-lg text-xs font-semibold transition-all duration-150",
+                    currentPage === page
+                      ? "bg-[#2563EB] text-white shadow-sm"
+                      : "text-[#64748B] hover:bg-[#F8FAFC] hover:text-[#0F172A]"
+                  )}
+                >
+                  {page}
+                </button>
+              ))}
+            </div>
+
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+              className="h-8 px-2 text-xs"
+            >
+              Berikutnya
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* Delete Confirm Modal */}
       <Modal
