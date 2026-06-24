@@ -43,7 +43,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       {/* Sidebar Navigation */}
       <div
         className={cn(
-          "fixed inset-y-0 left-0 z-50 md:sticky md:block md:translate-x-0 transition-transform duration-300 ease-in-out shrink-0 bg-white shadow-lg md:shadow-none",
+          "fixed inset-y-0 left-0 z-50 md:sticky md:top-0 md:h-screen md:block md:translate-x-0 transition-transform duration-300 ease-in-out shrink-0 bg-white shadow-lg md:shadow-none",
           isOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >

@@ -26,7 +26,7 @@ export function AdminSidebar({ onClose }: AdminSidebarProps) {
   };
 
   return (
-    <aside className="w-56 shrink-0 bg-white border-r border-[#E2E8F0] min-h-screen flex flex-col">
+    <aside className="w-56 shrink-0 bg-white border-r border-[#E2E8F0] h-full flex flex-col">
       {/* Header */}
       <div className="p-4 border-b border-[#E2E8F0] flex items-center justify-between">
         <div className="flex items-center gap-2 text-[#0F172A]">
@@ -48,7 +48,7 @@ export function AdminSidebar({ onClose }: AdminSidebarProps) {
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 p-3 flex flex-col gap-1">
+      <nav className="flex-1 p-3 flex flex-col gap-1 overflow-y-auto">
         {navItems.map(({ href, label, icon: Icon }) => {
           const isActive =
             pathname === href || pathname.startsWith(href + "/");
