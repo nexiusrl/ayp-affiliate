@@ -21,7 +21,7 @@ export function LoadMore({ currentLimit, hasMore }: LoadMoreProps) {
     
     const targetPath = window.location.pathname;
     startTransition(() => {
-      router.push(`${targetPath}?${params.toString()}`);
+      router.push(`${targetPath}?${params.toString()}`, { scroll: false });
     });
   };
 
