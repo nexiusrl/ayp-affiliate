@@ -12,6 +12,12 @@
   Aplikasi dilengkapi dengan <strong>Dashboard Admin</strong> yang aman untuk mengelola kategori dan produk secara manual.
 </p>
 
+<p align="center">
+  <a href="https://skillicons.dev">
+    <img src="https://skillicons.dev/icons?i=typescript,javascript,nextjs,react,tailwind,mysql,postgres,supabase" alt="Tech Stack" />
+  </a>
+</p>
+
 ---
 
 ## 🚀 Fitur Utama
@@ -29,10 +35,11 @@
 
 ## 🛠️ Tech Stack
 
-- **Framework**: Next.js 16 (App Router, Turbopack)
-- **Styling**: Tailwind CSS
-- **Icons**: Lucide React
-- **Database**: mysql2 (MariaDB/MySQL) / @supabase/supabase-js (PostgreSQL)
+- **Languages**: ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=flat-square&logo=typescript&logoColor=white) ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black) ![SQL](https://img.shields.io/badge/SQL-CC2927?style=flat-square&logo=sqlite&logoColor=white)
+- **Framework**: ![Next.js](https://img.shields.io/badge/Next.js-000000?style=flat-square&logo=nextdotjs&logoColor=white) ![React](https://img.shields.io/badge/React-20232A?style=flat-square&logo=react&logoColor=61DAFB)
+- **Styling**: ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white)
+- **Icons**: ![Lucide Icons](https://img.shields.io/badge/Lucide_Icons-2563EB?style=flat-square&logo=lucide&logoColor=white)
+- **Database**: ![MySQL](https://img.shields.io/badge/MySQL-00758F?style=flat-square&logo=mysql&logoColor=white) ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=flat-square&logo=postgresql&logoColor=white) ![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=flat-square&logo=supabase&logoColor=white)
 - **Token Signing**: Native Web Crypto API
 
 ---
