@@ -2,8 +2,6 @@ import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { db } from "@/lib/db";
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { CategoryFilter } from "@/components/product/CategoryFilter";
 import { ProductGridSkeleton } from "@/components/ui/Skeleton";
@@ -56,43 +54,39 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
   const displayProducts = hasMore ? products.slice(0, currentLimit) : products;
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <Navbar />
-      <main id="main-content" className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6">
-        {/* Category Filter */}
-        <section className="mb-5" aria-label="Filter kategori">
-          <Suspense fallback={null}>
-            <CategoryFilter categories={categories ?? []} />
-          </Suspense>
-        </section>
+    <>
+      {/* Category Filter */}
+      <section className="mb-5" aria-label="Filter kategori">
+        <Suspense fallback={null}>
+          <CategoryFilter categories={categories ?? []} />
+        </Suspense>
+      </section>
 
-        {/* Heading & Sort Tool bar */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5 border-b border-[#F1F5F9] pb-3">
-          <div>
-            <h1 className="text-sm font-bold text-[#0F172A] flex items-center gap-2">
-              <span>Kategori: {category.name}</span>
-              <span className="text-xs font-normal text-[#64748B] bg-[#F1F5F9] px-2 py-0.5 rounded-full">
-                {hasMore ? `${currentLimit}+` : displayProducts.length} produk
-              </span>
-            </h1>
-            {search && (
-              <p className="text-xs text-[#64748B] mt-1">
-                Filter kata kunci: &ldquo;{search}&rdquo;
-              </p>
-            )}
-          </div>
-          <SortSelect />
+      {/* Heading & Sort Tool bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5 border-b border-[#F1F5F9] pb-3">
+        <div>
+          <h1 className="text-sm font-bold text-[#0F172A] flex items-center gap-2">
+            <span>Kategori: {category.name}</span>
+            <span className="text-xs font-normal text-[#64748B] bg-[#F1F5F9] px-2 py-0.5 rounded-full">
+              {hasMore ? `${currentLimit}+` : displayProducts.length} produk
+            </span>
+          </h1>
+          {search && (
+            <p className="text-xs text-[#64748B] mt-1">
+              Filter kata kunci: &ldquo;{search}&rdquo;
+            </p>
+          )}
         </div>
+        <SortSelect />
+      </div>
 
-        {/* Product Grid */}
-        <section aria-label={`Produk ${category.name}`}>
-          <Suspense fallback={<ProductGridSkeleton count={10} />}>
-            <ProductGrid products={displayProducts} />
-          </Suspense>
-          <LoadMore currentLimit={currentLimit} hasMore={hasMore} />
-        </section>
-      </main>
-      <Footer />
-    </div>
+      {/* Product Grid */}
+      <section aria-label={`Produk ${category.name}`}>
+        <Suspense fallback={<ProductGridSkeleton count={10} />}>
+          <ProductGrid products={displayProducts} />
+        </Suspense>
+        <LoadMore currentLimit={currentLimit} hasMore={hasMore} />
+      </section>
+    </>
   );
 }
