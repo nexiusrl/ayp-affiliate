@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Edit2, Trash2, Eye, EyeOff } from "lucide-react";
+import { Edit2, Trash2, Eye, EyeOff, Filter } from "lucide-react";
 import { type Product } from "@/types";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
@@ -22,6 +22,23 @@ export function ProductTable({ products }: ProductTableProps) {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [togglingId, setTogglingId] = useState<string | null>(null);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string>("all");
+
+  // Get unique categories from products list
+  const categories = Array.from(
+    new Map(
+      products
+        .map((p) => p.categories)
+        .filter((c): c is NonNullable<typeof c> => !!c)
+        .map((c) => [c.id, c])
+    ).values()
+  ).sort((a, b) => a.name.localeCompare(b.name));
+
+  const filteredProducts = selectedCategoryId === "all"
+    ? products
+    : products.filter(
+        (p) => p.category_id === selectedCategoryId || p.categories?.id === selectedCategoryId
+      );
 
   const handleDelete = async () => {
     if (!deleteId) return;
@@ -73,6 +90,26 @@ export function ProductTable({ products }: ProductTableProps) {
 
   return (
     <>
+      {/* Filter Bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 bg-white p-4 rounded-xl border border-[#E2E8F0]">
+        <div className="flex items-center gap-2 text-sm text-[#64748B]">
+          <Filter size={16} />
+          <span className="font-medium text-[#475569]">Saring Kategori:</span>
+        </div>
+        <select
+          value={selectedCategoryId}
+          onChange={(e) => setSelectedCategoryId(e.target.value)}
+          className="text-sm border border-[#E2E8F0] rounded-lg px-3 py-1.5 bg-white text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent min-w-[220px]"
+        >
+          <option value="all">Semua Kategori ({products.length})</option>
+          {categories.map((cat) => (
+            <option key={cat.id} value={cat.id}>
+              {cat.name} ({products.filter(p => p.category_id === cat.id).length})
+            </option>
+          ))}
+        </select>
+      </div>
+
       <div className="bg-white rounded-xl border border-[#E2E8F0] overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
@@ -102,7 +139,14 @@ export function ProductTable({ products }: ProductTableProps) {
               </tr>
             </thead>
             <tbody>
-              {products.map((product, i) => (
+              {filteredProducts.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="text-center py-8 text-[#64748B] text-sm">
+                    Tidak ada produk dalam kategori ini.
+                  </td>
+                </tr>
+              ) : (
+                filteredProducts.map((product, i) => (
                 <tr
                   key={product.id}
                   className={`border-b border-[#E2E8F0] last:border-0 hover:bg-[#F8FAFC] transition-colors ${
@@ -195,7 +239,7 @@ export function ProductTable({ products }: ProductTableProps) {
                     </div>
                   </td>
                 </tr>
-              ))}
+              )))}
             </tbody>
           </table>
         </div>
