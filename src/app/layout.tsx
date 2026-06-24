@@ -1,7 +1,13 @@
 import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { ToastProvider } from "@/components/ui/Toast";
 import { BackToTop } from "@/components/product/BackToTop";
+
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: {
@@ -37,7 +43,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="id" data-scroll-behavior="smooth">
-      <body>
+      <body className={inter.className}>
         <ToastProvider>
           {children}
           <BackToTop />

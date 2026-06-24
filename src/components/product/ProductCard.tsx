@@ -60,7 +60,9 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
             className={cn(
               "object-cover transition-all duration-300 group-hover:scale-105",
-              imageLoading ? "scale-95 blur-sm opacity-0" : "scale-100 blur-0 opacity-100"
+              priority
+                ? "scale-100 blur-0 opacity-100"
+                : (imageLoading ? "scale-95 blur-sm opacity-0" : "scale-100 blur-0 opacity-100")
             )}
             onLoad={() => setImageLoading(false)}
             onError={(e) => {
